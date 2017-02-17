@@ -48,7 +48,7 @@ class Converter
           res = res / partial_result(operand)
         end
 
-        operator = operand[-1] if operand[-1] == '/' || operand[-1] == '*'
+        operator = operand[-1] if operand?(operand[-1])
 
         res
       end
@@ -75,7 +75,11 @@ class Converter
     (str =~ /[()\*\/]/).nil?
   end
 
-  # #split_on_operator splits a string on '/' or '*' but ignoring the characters
+  def operand?(char)
+    char == '/' || char == '*'
+  end
+
+  # #split_on_operator splits a string on '/' or '*' but ignores the characters
   # that are within parentheses. It also keeps the delimiter in the result.
   #
   # For example,
@@ -83,26 +87,23 @@ class Converter
   # => ["degree*", "min/", "(day*day)"]
   def split_on_operators(str)
     str = str.join if str.is_a? Array
-    return [str] if str.empty?
+    return [str] if base_operand?(str)
 
-    # The following regex uses a non-capturing group, '?:', to ignore the
-    # contents within parentheses and splits the string on '*' and stores
-    # everything in the variable results.
-    results = str.scan(/(?:\(.*\)|[^\*])+/)
-
-    # Add back the '*' delimiter to the results.
-    if results.length > 1
-      results[0..-2].each { |result| result << '*' }
+    results      = []
+    follower_ptr = 0
+    parens_stack = []
+    (0..(str.length-1)).each do |leader_ptr|
+      if leader_ptr == str.length-1
+        results << str[follower_ptr..leader_ptr]
+      elsif str[leader_ptr] == '('
+        parens_stack << '('
+      elsif str[leader_ptr] == ')'
+        parens_stack.pop
+      elsif operand?(str[leader_ptr]) && parens_stack.empty?
+        results << str[follower_ptr..leader_ptr]
+        follower_ptr = leader_ptr + 1
+      end
     end
-
-    # Now take the contents of the results array and split on '/' while ignoring
-    # all contents within parentheses.
-    results = results.reverse.map do |result|
-      result = result.scan(/(?:\(.*?\)|[^\/])+/)
-    end.reverse
-
-    # Add back the '/' delimiter to the results.
-    results.flatten![0..-2].each { |result| result << '/' unless result =~ /\*$/ }
 
     results
   end
@@ -126,7 +127,7 @@ class Converter
   end
 
   def rm_trailing_operand(str)
-    return str[0..-2] if str[-1] == '/' || str[-1] == '*'
+    return str[0..-2] if operand?(str[-1])
     str
   end
 

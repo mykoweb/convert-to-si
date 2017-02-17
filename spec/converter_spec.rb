@@ -119,5 +119,18 @@ describe Converter do
         end
       end
     end
+
+    context 'with a really crazy unit' do
+      # let(:unit) { '(degree)/degree*(degree)/(minute*((day)))' }
+      let(:unit) { '((degree*degree)/degree)/degree*(degree)/degree*(degree)/(minute*((day)))*degree' }
+
+      it 'returns the correct converted units' do
+        expect(described_class.new(unit).unit_name).to eq '((rad*rad)/rad)/rad*(rad)/rad*(rad)/(s*((s)))*rad'
+      end
+
+      it 'returns the correct multiplication factor' do
+        expect(described_class.new(unit).mult_factor.round(14)).to eq 0.000_000_000_058_76
+      end
+    end
   end
 end
