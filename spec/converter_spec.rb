@@ -121,8 +121,7 @@ describe Converter do
     end
 
     context 'with a really crazy unit' do
-      # let(:unit) { '(degree)/degree*(degree)/(minute*((day)))' }
-      let(:unit) { '((degree*degree)/degree)/degree*(degree)/degree*(degree)/(minute*((day)))*degree' }
+      let(:unit) { '((degree*°)/degree)/degree*(degree)/degree*(degree)/(minute*((day)))*degree' }
 
       it 'returns the correct converted units' do
         expect(described_class.new(unit).unit_name).to eq '((rad*rad)/rad)/rad*(rad)/rad*(rad)/(s*((s)))*rad'

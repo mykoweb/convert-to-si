@@ -9,7 +9,11 @@ class Converter
 
     # Convert units to the SI unit names
     conversion_factors.each do |k,v|
-      @unit_name.gsub!(/\b#{k}\b/, v.last)
+      if k.include?('°') || k.include?('‘') || k.include?('“')
+        @unit_name.gsub!(/#{k}/, v.last)
+      else
+        @unit_name.gsub!(/\b#{k}\b/, v.last)
+      end
     end
 
     # Generate the multiplication factor
