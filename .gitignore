@@ -10,3 +10,4 @@ vendor/
 .sass-cache/
 tmp/
 pkg/
+.byebug_history

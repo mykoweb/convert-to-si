@@ -85,11 +85,26 @@ class Converter
     str = str.join if str.is_a? Array
     return [str] if str.empty?
 
-    # The following regex is using a positive look-behind, '?<=', to keep
-    # the operator delimiters ('/' and '*') in the results at the end of each
-    # string. It is also using a non-capturing group, '?:', to ignore the
-    # contents within parentheses.
-    str.split(/(?<=[\*\/])(?=[^\)]*?(?:\(|$))/)
+    # The following regex uses a non-capturing group, '?:', to ignore the
+    # contents within parentheses and splits the string on '*' and stores
+    # everything in the variable results.
+    results = str.scan(/(?:\(.*\)|[^\*])+/)
+
+    # Add back the '*' delimiter to the results.
+    if results.length > 1
+      results[0..-2].each { |result| result << '*' }
+    end
+
+    # Now take the contents of the results array and split on '/' while ignoring
+    # all contents within parentheses.
+    results = results.reverse.map do |result|
+      result = result.scan(/(?:\(.*?\)|[^\/])+/)
+    end.reverse
+
+    # Add back the '/' delimiter to the results.
+    results.flatten![0..-2].each { |result| result << '/' unless result =~ /\*$/ }
+
+    results
   end
 
   # #units_enclosed_in_parens? takes in a string and returns a boolean. It

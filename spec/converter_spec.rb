@@ -49,6 +49,14 @@ describe Converter do
   end
 
   describe '#unit_name' do
+    context 'with a complex unit' do
+      let(:unit) { '(degree)/(minute*day)' }
+
+      it 'returns the correct converted units' do
+        expect(described_class.new(unit).unit_name).to eq '(rad)/(s*s)'
+      end
+    end
+
     context 'with various combinations of well-formed parentheses' do
       good_units.each do |unit, converted_unit|
         it 'returns the correct converted units' do
@@ -59,6 +67,51 @@ describe Converter do
   end
 
   describe '#mult_factor' do
+    context 'with a complex unit' do
+      [
+        '(degree)/(minute*(day))',
+        '(degree)/((minute)*day)',
+        'degree/(minute*(day))',
+        'degree/((minute)*day)'
+      ].each do |unit|
+        it 'returns the correct multiplication factor' do
+          expect(described_class.new(unit).mult_factor.round(14)).to eq 0.000_000_003_366_76
+        end
+      end
+    end
+
+    context 'with another complex unit' do
+      [
+        '(min*min*min)/min',
+        '((min)*min*min)/min',
+        '(min*(min)*min)/min',
+        '(min*min*(min))/min',
+        '((min*min)*min)/min',
+        '(min*(min*min))/min',
+        '(min*(min*min))/(min)'
+      ].each do |unit|
+        it 'returns the correct multiplication factor' do
+          expect(described_class.new(unit).mult_factor.round(14)).to eq 3600.0
+        end
+      end
+    end
+
+    context 'with yet another complex unit' do
+      [
+        'h/(h*h*h)',
+        'h/((h)*h*h)',
+        'h/(h*(h)*h)',
+        'h/(h*h*(h))',
+        'h/((h*h)*h)',
+        'h/(h*(h*h))',
+        '((h))/(h*(h*h))'
+      ].each do |unit|
+        it 'returns the correct multiplication factor' do
+          expect(described_class.new(unit).mult_factor.round(14)).to eq 0.000_000_077_160_49
+        end
+      end
+    end
+
     context 'with various combinations of well-formed parentheses' do
       good_units.each do |unit, _converted_unit|
         it 'returns the correct multiplication factor' do
