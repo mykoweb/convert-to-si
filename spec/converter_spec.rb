@@ -131,5 +131,13 @@ describe Converter do
         expect(described_class.new(unit).mult_factor.round(14)).to eq 0.000_000_000_058_76
       end
     end
+
+    context 'with a time divided by mass unit' do
+      let(:unit) { 'min/t' }
+
+      it 'returns the correct multiplication factor' do
+        expect(described_class.new(unit).mult_factor.round(14)).to eq 0.06
+      end
+    end
   end
 end

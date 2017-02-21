@@ -158,23 +158,23 @@ class Converter
 
   def conversion_factors
     @_conversion_factors ||= {
-      'minute'  => [60, 's'],
-      'min'     => [60, 's'],
-      'hour'    => [3600, 's'],
-      'h'       => [3600, 's'],
-      'day'     => [86400, 's'],
-      'd'       => [86400, 's'],
+      'minute'  => [60.0, 's'],
+      'min'     => [60.0, 's'],
+      'hour'    => [3600.0, 's'],
+      'h'       => [3600.0, 's'],
+      'day'     => [86400.0, 's'],
+      'd'       => [86400.0, 's'],
       'degree'  => [Math::PI/180, 'rad'],
       '°'       => [Math::PI/180, 'rad'],
       '‘'       => [Math::PI/10800, 'rad'],
       'second'  => [Math::PI/648000, 'rad'],
       '“'       => [Math::PI/648000, 'rad'],
-      'hectare' => [10000, 'm2'],
-      'ha'      => [10000, 'm2'],
+      'hectare' => [10000.0, 'm2'],
+      'ha'      => [10000.0, 'm2'],
       'litre'   => [0.001, 'm3'],
       'l'       => [0.001, 'm3'],
-      'tonne'   => [1000, 'kg'],
-      't'       => [1000, 'kg']
+      'tonne'   => [1000.0, 'kg'],
+      't'       => [1000.0, 'kg']
     }
   end
 end
